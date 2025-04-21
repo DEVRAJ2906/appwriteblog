@@ -16,7 +16,7 @@ export class AuthService {
 
     async createAccount({email, password, name}) {
         try {
-            const userAccount = await this.account.create(ID.unique(), email, password, name);
+            const userAccount = await this.account.createJWT(ID.unique(), email, password, name);
             if (userAccount) {
                 // call another method
                 return this.login({email, password});
@@ -40,6 +40,10 @@ export class AuthService {
         try {
             return await this.account.get();
         } catch (error) {
+            if (error.code === 401) {
+                // User is not logged in
+                return null
+              }            
             console.log("Appwrite serive :: getCurrentUser :: error", error);
         }
 
